@@ -257,7 +257,7 @@ rows from the stories table in the final output database.
 
 ## Extract notes, summaries, and commercial links from chapters
 
-Extracts notes, summaries, content warnings, and 
+Extracts notes, summaries, content warnings, and commercial links from story files
 
 This is mostly for non-eFiction archives where the author's notes and content warnings are present in the main bodies of work instead of separate fields. If you use this with the 'remove_option' in the properties file populated, the script will create a backup of all works. If you hit an error or KeyboardInterrupt, the script prints out the index of the chapters list you were at. 
 
