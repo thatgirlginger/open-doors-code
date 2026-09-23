@@ -8,11 +8,11 @@ from story_cleanup.outputs import OutputCSV, OutputStoryFiles
 from story_cleanup.parsing import Parser
 
 
-#TODO: improve logging
-'''
+# TODO: improve logging
+"""
 For archives where authors' notes and summaries are in the main body of text, this script scans for and removes them
 note that this does /not/ load fields into the database tables, only extracts them to a CSV (and deletes if necessary)
-'''
+"""
 
 if __name__ == "__main__":
     args_obj = Args()
@@ -24,12 +24,14 @@ if __name__ == "__main__":
     to_remove = args.remove_option
 
     csv = OutputCSV(args.output_csv, options)
-    j = int(input("the index you left off at, if you are starting from scratch enter 0\n"))
+    j = int(
+        input("the index you left off at, if you are starting from scratch enter 0\n")
+    )
 
     if to_remove is not None and j == 0:
         shutil.copytree(args.chapters_path, args.chapters_backup_path)
         rewrite = OutputStoryFiles(args.chapters_path)
-    
+
     try:
         # TODO: function that queries db for chapter and filenames
         if j == 0:
@@ -45,8 +47,8 @@ if __name__ == "__main__":
             if to_remove is not None:
                 new_text = rewrite.strip_and_rewrite(text, hits)
                 rewrite.out_to_file(s, new_text)
-                
-            hits.update({'story_identifier':s})
+
+            hits.update({"story_identifier": s})
             csv.write_data(hits)
             j += 1
 

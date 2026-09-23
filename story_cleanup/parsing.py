@@ -1,13 +1,14 @@
 from .keywords import Keywords
 from .messages import Messaging
 
+
 class Parser:
     def __init__(self, textlines: list, options: list):
         self.textlines = textlines
         self.max = len(self.textlines)
         self.options_dict = {}
         for opt in options:
-            self.options_dict.update({opt:""})
+            self.options_dict.update({opt: ""})
         self.end_message = "***no more lines to preview, press enter to continue***"
         self.kwords = Keywords()
 
@@ -34,5 +35,7 @@ class Parser:
         for i in range(0, int(self.max)):
             for o in self.options_dict.keys():
                 if self.kwords.detect(o, self.textlines[i]):
-                    self.options_dict[o] = self.options_dict[o] + "\n" + self.detection_loop(o, i)
+                    self.options_dict[o] = (
+                        self.options_dict[o] + "\n" + self.detection_loop(o, i)
+                    )
         return self.options_dict

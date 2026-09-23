@@ -1,9 +1,11 @@
 from colorama import Fore, Style
 
+
 class Messaging:
-    '''
+    """
     class that handles interactivity, message colors, etc
-    '''
+    """
+
     def __init__(self, text):
         self.text = text
         self.summary_color = Fore.BLUE
@@ -13,6 +15,7 @@ class Messaging:
         self.additional_lines_color = Fore.LIGHTBLACK_EX
         self.general = Fore.GREEN
         self.reset = Style.RESET_ALL
+
     def check_init_response(self, type):
         match type:
             case "summary":
@@ -23,14 +26,25 @@ class Messaging:
                 print(self.warning_color + f"{type}:\n" + self.reset + self.text)
             case "commercial":
                 print(self.commercial_color + f"{type}:\n" + self.reset + self.text)
-        r = input(self.general + "Enter 'n' if this is not correct, otherwise press any key to continue: \n" + self.reset)
+        r = input(
+            self.general
+            + "Enter 'n' if this is not correct, otherwise press any key to continue: \n"
+            + self.reset
+        )
         if r.lower() == "n":
             return False
         return True
+
     def check_additional_lines(self, preview):
         print(f"{self.text}\n")
         print(self.additional_lines_color + preview + self.reset)
-        r = input((self.general + "Enter 'n' if you would like to add the next line to the string identified and removed, otherwise press any key to continue: \n" + self.reset))
+        r = input(
+            (
+                self.general
+                + "Enter 'n' if you would like to add the next line to the string identified and removed, otherwise press any key to continue: \n"
+                + self.reset
+            )
+        )
         if r == "n":
             return True
         return False

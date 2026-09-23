@@ -282,13 +282,11 @@ class Args(object):
                 )
             if os.path.exists(self.args.chapters_backup_path):
                 os.rmdir(self.args.chapters_backup_path)
-        
+
         if self.args.output_csv is None:
-            self.args.output_csv = input(
-                "Output path for the extracted CSV"
-            )
+            self.args.output_csv = input("Output path for the extracted CSV")
         if self.args.scan_types is None:
-            self.args.scan_types = ['notes', 'warnings', 'summary', 'commercial']
+            self.args.scan_types = ["notes", "warnings", "summary", "commercial"]
 
         self._print_args(self.args)
         return self.args
