@@ -30,3 +30,8 @@ def recursive_story_listdir(main_path):
         for s in stories:
             storyfiles.append(os.path.join(dir, s))
     return storyfiles
+
+
+def make_story_id(storyfilename):
+    story_id = storyfilename.split(".")
+    return story_id[0]

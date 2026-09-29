@@ -280,8 +280,8 @@ class Args(object):
                 self.args.chapters_backup_path = input(
                     "Desired location (full path) of the original text backup"
                 )
-            if os.path.exists(self.args.chapters_backup_path):
-                os.rmdir(self.args.chapters_backup_path)
+            # if os.path.exists(self.args.chapters_backup_path):
+            #    os.rmdir(self.args.chapters_backup_path)
 
         if self.args.output_csv is None:
             self.args.output_csv = input("Output path for the extracted CSV")

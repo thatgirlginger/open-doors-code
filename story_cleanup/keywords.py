@@ -11,30 +11,43 @@ class Keywords:
             "disclaimer",
             "Disclaimer",
             "DISCLAIMER",
+            "disclamer",
+            "copyright",
+            "Disclamer",
         ]
         self.warnings = [
-            "warning",
-            "Warning",
             "warnings",
             "Warnings",
-            "cw",
-            "CW",
+            "WARNING",
+            "Warning",
+            "cw ",
+            "CW ",
             "content warning",
             "Content Warning",
             "trigger warning",
             "Trigger Warning",
             "Content warning",
             "Trigger warning",
-            "tw",
-            "TW",
+            "tw ",
+            "TW ",
+            "tw:",
+            "TW:",
+            "tw-",
+            "TW-",
+            "cw:",
+            "CW:",
+            "cw-",
+            "CW-",
         ]
         self.summary = [
             "summary",
             "Summary",
             "summaries",
             "Summaries",
-            "prompt",
-            "Prompt",
+            "prompt ",
+            "Prompt ",
+            "summery",
+            "Summery",
         ]
         self.commercial = [
             "Patreon",
@@ -46,11 +59,19 @@ class Keywords:
             "gofundme",
             "GoFundMe",
         ]
-        # self.ratings
-        # self.wordcount
-        # self.pairings
-        # self.characters
-        # others defined
+        self.ratings = ["rating", "Rating", "rated", "Rated"]
+        self.wordcount = [
+            "words:",
+            "words-",
+            "wordcount",
+            "Wordcount",
+            "Words:",
+            "Words-",
+            "word count",
+            "Word count",
+            "Word Count",
+        ]
+        self.pairings = ["pairing", "Pairing", "relationship", "Relationship"]
 
     def detect(self, type, text):
         match type:
@@ -62,9 +83,15 @@ class Keywords:
                 keywords = self.summary
             case "commercial":
                 keywords = self.commercial
+            case "rating":
+                keywords = self.ratings
+            case "wordcount":
+                keywords = self.wordcount
+            case "pairings":
+                keywords = self.pairings
             case _:
                 raise NameError(
-                    "unsupported type: must be 'notes', 'warnings', 'summary', or 'commercial'; check config file"
+                    "unsupported type: must be 'notes', 'warnings', 'summary', 'rating', 'pairings', 'wordcount', or 'commercial'; check config file"
                 )
         for k in keywords:
             if k in text:

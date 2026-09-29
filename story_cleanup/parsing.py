@@ -16,6 +16,8 @@ class Parser:
         m = Messaging(self.textlines[i])
         if m.check_init_response(type):
             local_count = i + 1
+            # in case user accidentally deletes a line
+            print(f"line number: {local_count}")
             txt = self.textlines[i]
             try:
                 a = m.check_additional_lines(self.textlines[local_count])

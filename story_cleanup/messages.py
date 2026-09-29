@@ -26,6 +26,12 @@ class Messaging:
                 print(self.warning_color + f"{type}:\n" + self.reset + self.text)
             case "commercial":
                 print(self.commercial_color + f"{type}:\n" + self.reset + self.text)
+            case "rating":
+                print(self.summary_color + f"{type}:\n" + self.reset + self.text)
+            case "pairings":
+                print(self.notes_color + f"{type}:\n" + self.reset + self.text)
+            case "wordcount":
+                print(self.summary_color + f"{type}:\n" + self.reset + self.text)
         r = input(
             self.general
             + "Enter 'n' if this is not correct, otherwise press any key to continue: \n"

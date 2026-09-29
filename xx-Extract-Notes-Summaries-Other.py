@@ -2,7 +2,7 @@ import os
 import shutil
 
 from shared_python.Args import Args
-from shared_python.Common import recursive_story_listdir
+from shared_python.Common import recursive_story_listdir, make_story_id
 
 from story_cleanup.outputs import OutputCSV, OutputStoryFiles
 from story_cleanup.parsing import Parser
@@ -30,7 +30,8 @@ if __name__ == "__main__":
 
     if to_remove is not None and j == 0:
         shutil.copytree(args.chapters_path, args.chapters_backup_path)
-        rewrite = OutputStoryFiles(args.chapters_path)
+
+    rewrite = OutputStoryFiles(args.chapters_path)
 
     try:
         # TODO: function that queries db for chapter and filenames
@@ -48,8 +49,9 @@ if __name__ == "__main__":
                 new_text = rewrite.strip_and_rewrite(text, hits)
                 rewrite.out_to_file(s, new_text)
 
-            hits.update({"story_identifier": s})
+            hits.update({"story_identifier": make_story_id(s)})
             csv.write_data(hits)
+            log.info(f"PROGRESS UPDATE: {j}")
             j += 1
 
     except KeyboardInterrupt:
