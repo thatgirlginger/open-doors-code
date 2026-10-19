@@ -72,7 +72,7 @@ class FinalTables(object):
         cols_with_tags = []
         for col, tags in story_tags.items():
             cols_with_tags.append(
-                "{0}='{1}'".format(col, tags.replace("'", "\\'").strip())
+                "{0}='{1}'".format(col, tags.replace("'", "''").strip())
             )
 
         if cols_with_tags:
