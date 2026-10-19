@@ -36,12 +36,12 @@ class Tags(object):
         """
         try:
             database = self.database if database is None else database
-            self.sql.execute("DROP TABLE IF EXISTS {0}.`tags`".format(database))
+            query = """DROP TABLE IF EXISTS %s"""
+            self.sql.execute(query, [database])
         except OperationalError as e:
             self.log.info("Command skipped: {}".format(e))
-        self.sql.execute(
-            """
-      CREATE TABLE IF NOT EXISTS {0}.`tags` (
+        create_tags_query ="""
+      CREATE TABLE IF NOT EXISTS %s.`tags` (
         `id` int(11) AUTO_INCREMENT,
         `original_tagid` int(11) DEFAULT NULL,
         `original_tag` varchar(1024) DEFAULT NULL,
@@ -53,9 +53,8 @@ class Tags(object):
         `ao3_tag_category` VARCHAR(255) DEFAULT NULL,
         `ao3_tag_fandom` VARCHAR(255) DEFAULT NULL,
         PRIMARY KEY (`id`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    """.format(database)
-        )
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"""
+        self.sql.execute(create_tags_query, [database])
 
     def populate_tag_table(
         self,
@@ -69,20 +68,20 @@ class Tags(object):
         """
         Used only in step 02 for non-eFiction archives
         """
-        self.sql.execute("USE {0}".format(database_name))
+        use_query = """USE %s"""
+        truncate_query = """TRUNCATE %s"""
+        self.sql.execute(use_query, [database_name])
         if truncate:
-            self.sql.execute("TRUNCATE {0}.`tags`".format(database_name))
+            self.sql.execute(truncate_query, [database_name])
 
         tag_columns = (
             tag_col_lookup.keys()
         )  # [d['col'] for d in tag_col_lookup if 'col' in d]
 
         # Get all values from all tag columns in the stories table and load as denormalised values in `tags` table
+        select_query = """SELECT %s, %s FROM %s"""
         data = self.sql.execute_dict(
-            "SELECT {0}, {1} FROM {2}".format(
-                story_id_col_name, ", ".join(tag_columns), table_name
-            )
-        )
+            select_query, [story_id_col_name, ", ".join(tag_columns), table_name])
 
         tags_to_insert = {}
         tags_to_story_ids = defaultdict(list)
@@ -112,12 +111,13 @@ class Tags(object):
                                 )
 
         if len(tags_to_insert) > 0:
+            # change this, leaving alone for the time being
             self.sql.execute(
                 """
            INSERT INTO tags (original_tag, original_type, ao3_tag_fandom) VALUES {0}
          """.format(", ".join(tags_to_insert.values()))
             )
-
+            # TODO: change this here, it seems like it just formats the string with the tuples which seems like it could cause problems
             tag_data = self.sql.execute_dict("SELECT id, original_tag FROM tags")
             for tag_row in tag_data:
                 story_ids = set(tags_to_story_ids[tag_row["original_tag"]])
