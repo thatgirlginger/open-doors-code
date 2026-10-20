@@ -18,3 +18,5 @@ pyyaml==6.0.1
 colorlog==6.7.0
 prompt_toolkit==3.0.39
 ruff==0.1.5
+requests==2.34.2
+bs4==0.0.2
