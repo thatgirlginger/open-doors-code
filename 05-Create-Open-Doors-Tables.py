@@ -148,6 +148,8 @@ def main(args, log):
         ):
             final_author["email"] = _clean_email(final_author)
             final_authors.append(final_author)
+
+    # insert_into_final used here
     final.insert_into_final("authors", final_authors)
 
     # CHAPTERS
@@ -181,6 +183,7 @@ def main(args, log):
             )
         )
         final_chapters = final.dummy_chapters(final_stories)
+        # used here too
         final.insert_into_final("chapters", final_chapters)
 
 

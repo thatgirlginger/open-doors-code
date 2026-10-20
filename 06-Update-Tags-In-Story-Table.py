@@ -16,5 +16,5 @@ if __name__ == "__main__":
     sql = Sql(args, log)
     tags = Tags(args, sql, log)
     final = FinalTables(args, sql, log)
-    populate_tags = PopulateTags(args, sql, log, tags, final)  
+    populate_tags = PopulateTags(args, sql, log, tags, final)
     populate_tags.populate_tags()

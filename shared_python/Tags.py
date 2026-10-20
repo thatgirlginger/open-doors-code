@@ -90,23 +90,16 @@ class Tags(object):
             for col in tag_columns:
                 needs_fandom = col in tags_with_fandoms
                 if story_tags_row[col] is not None:
-                    for val in re.split(r", ?", story_tags_row[col]):
-                        if val != "":
-                            if isinstance(
-                                tag_col_lookup[col], str
-                            ):  # Probably AA or a custom archive
-                                cleaned_tag = re.sub(
-                                    r'(?<!\\)"',
-                                    '\\"',
-                                    val.replace("'", "'").strip(),
-                                )
-                                tags_to_story_ids[cleaned_tag].append(
+                    for tag_val in re.split(r", ?", story_tags_row[col]):
+                        if tag_val != "":
+                            if isinstance(tag_col_lookup[col], str):
+                                tags_to_story_ids[tag_val].append(
                                     story_tags_row[story_id_col_name]
                                 )
                                 tags_to_insert[
-                                    cleaned_tag
+                                    tag_val
                                 ] = '("{0}", "{1}", "{2}")'.format(
-                                    cleaned_tag,
+                                    val,
                                     tag_col_lookup[col],
                                     story_tags_row["fandoms"] if needs_fandom else "",
                                 )
@@ -173,7 +166,7 @@ class Tags(object):
         :return: number of newly inserted rows to item_tags
         """
         tag_headers = self.tag_export_map
-        tag = str(row[tag_headers["original_tag"]]).replace("'", r"\'")
+        tag = str(row[tag_headers["original_tag"]])  # .replace("'", r"\'")
         tag_id = row[tag_headers["id"]]
         validate_tag = TagValidator(self.log)
 
@@ -182,8 +175,8 @@ class Tags(object):
         else:
             tagid_filter = f"id={tag_id}"
 
-        fandom = row[tag_headers["ao3_tag_fandom"]].replace("'", r"\'")
-        ao3_tags = row[tag_headers["ao3_tag"]].replace("'", r"\'").split(",")
+        fandom = row[tag_headers["ao3_tag_fandom"]]
+        ao3_tags = row[tag_headers["ao3_tag"]].split(",")
         ao3_tag_types = row[tag_headers["ao3_tag_type"]].split(",")
         number_types = len(ao3_tag_types)
 
