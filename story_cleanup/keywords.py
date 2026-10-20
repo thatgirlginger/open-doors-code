@@ -1,12 +1,6 @@
 class Keywords:
     def __init__(self):
-        self.notes = [
-            "note",
-            "a/n",
-            "disclaimer",
-            "tumblr",
-            "author"
-        ]
+        self.notes = ["note", "a/n", "disclaimer", "tumblr", "author"]
         self.warnings = [
             "warning",
             "cw",
@@ -14,12 +8,7 @@ class Keywords:
             "trigger warning",
             "tw",
         ]
-        self.summary = [
-            "summary",
-            "summaries",
-            "prompt",
-            "synopsis"
-        ]
+        self.summary = ["summary", "summaries", "prompt", "synopsis"]
         self.commercial = [
             "patreon",
             "ko-fi",
@@ -46,7 +35,7 @@ class Keywords:
                     "unsupported type: must be 'notes', 'warnings', 'summary', or 'commercial'; check config file"
                 )
         for k in keywords:
-        # eventually, a regex would be more efficient here, but with the line-by-line parsing built in this works for now
+            # eventually, a regex would be more efficient here, but with the line-by-line parsing built in this works for now
             if k in text.lower():
                 return True
         return False

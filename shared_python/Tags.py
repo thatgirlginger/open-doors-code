@@ -40,7 +40,7 @@ class Tags(object):
             self.sql.execute(query, [database])
         except OperationalError as e:
             self.log.info("Command skipped: {}".format(e))
-        create_tags_query ="""
+        create_tags_query = """
       CREATE TABLE IF NOT EXISTS %s.`tags` (
         `id` int(11) AUTO_INCREMENT,
         `original_tagid` int(11) DEFAULT NULL,
@@ -81,7 +81,8 @@ class Tags(object):
         # Get all values from all tag columns in the stories table and load as denormalised values in `tags` table
         select_query = """SELECT %s, %s FROM %s"""
         data = self.sql.execute_dict(
-            select_query, [story_id_col_name, ", ".join(tag_columns), table_name])
+            select_query, [story_id_col_name, ", ".join(tag_columns), table_name]
+        )
 
         tags_to_insert = {}
         tags_to_story_ids = defaultdict(list)
@@ -123,13 +124,16 @@ class Tags(object):
                 story_ids = set(tags_to_story_ids[tag_row["original_tag"]])
                 for story_id in story_ids:
                     self.sql.execute(
-                        """
-                    INSERT INTO item_tags (item_id, item_type, tag_id) VALUES ({0}, "{1}", {2})
-                    """.format(
+                        (
+                            """
+                    INSERT INTO item_tags (item_id, item_type, tag_id) VALUES (%s, %s, %s)
+                    """
+                        ),
+                        [
                             story_id,
-                            "story_link" if table_name == "story_links" else "story",
+                            "story_link" if table_name == "story_linkts" else "story",
                             tag_row["id"],
-                        )
+                        ],
                     )
 
     def distinct_tags(self, database):
@@ -202,38 +206,49 @@ class Tags(object):
 
             if idx > 0:
                 self.sql.execute(
-                    f"""
+                    """
                     INSERT INTO tags (ao3_tag, ao3_tag_type, ao3_tag_category, ao3_tag_fandom,
                     original_tag, original_tagid)
-                    VALUES ('{ao3_tag}', '{ao3_tag_type}', '{row[tag_headers['ao3_tag_category']]}',
-                    '{fandom}', '{tag}', '{tag_id}')
-                    """
+                    VALUES (%s, %s, %s,
+                    %s, %s, %s)
+                    """,
+                    [
+                        ao3_tag,
+                        ao3_tag_type,
+                        row[tag_headers["ao3_tag_category"]],
+                        fandom,
+                        tag,
+                        tag_id,
+                    ],
                 )
                 # get last auto increment tag id
                 sql_dict = self.sql.execute_dict("""select LAST_INSERT_ID();""")
                 new_tag_id = sql_dict[0]["LAST_INSERT_ID()"]
                 # get all associated items from item_tags
                 items = self.sql.execute_dict(
-                    f"""SELECT item_id, item_type
-                        FROM item_tags WHERE tag_id = {row['Original Tag ID']}"""
+                    """SELECT item_id, item_type
+                        FROM item_tags WHERE tag_id = %s""",
+                    [row["Original Tag ID"]],
                 )
 
                 # insert into item_tags table
                 for item in items:
                     item_id, item_type = item["item_id"], item["item_type"]
                     self.sql.execute(
-                        f"""INSERT INTO item_tags (item_id, item_type, tag_id) VALUES ('{item_id}', '{item_type}', '{new_tag_id}')"""
+                        """INSERT INTO item_tags (item_id, item_type, tag_id) VALUES (%s, %s, %s)""",
+                        [item_id, item_type, new_tag_id],
                     )
                     num_insert += 1
             else:
+                query = f"""UPDATE tags SET ao3_tag=%s, ao3_tag_type=%s, ao3_tag_category=%s, ao3_tag_fandom=%s WHERE {tagid_filter}"""
                 self.sql.execute(
-                    f"""
-              UPDATE tags
-              SET ao3_tag='{str(ao3_tag)}', ao3_tag_type='{ao3_tag_type}',
-              ao3_tag_category='{row[tag_headers['ao3_tag_category']]}',
-              ao3_tag_fandom='{fandom}'
-              WHERE {tagid_filter}
-            """
+                    query,
+                    [
+                        str(ao3_tag),
+                        ao3_tag_type,
+                        row[tag_headers["ao3_tag_category"]],
+                        fandom,
+                    ],
                 )
         return num_insert
 
@@ -242,7 +257,8 @@ class Tags(object):
             self.database,
             f"""
                                     SELECT item_id, item_type, GROUP_CONCAT(tag_id) as tag_ids
-                                    FROM item_tags WHERE item_type='{item_type}' GROUP BY item_id, item_type ;""",
+                                    FROM item_tags WHERE item_type=%s GROUP BY item_id, item_type""",
+            (item_type),
         )
         cur = 0
         total = len(story_ids)
@@ -255,7 +271,7 @@ class Tags(object):
             )
             sys.stdout.flush()
             tags = self.sql.execute_dict(
-                f"SELECT * FROM tags WHERE id in ({story_id[2]}) AND ao3_tag != ''"
+                "SELECT * FROM tags WHERE id in %s AND ao3_tag != ''", (story_id[2])
             )
             tags_by_story_id[story_id[0]] = tags
         return tags_by_story_id
